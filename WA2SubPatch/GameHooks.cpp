@@ -16,6 +16,11 @@ SubContext subContext;
 
 int seAddress = 0, voiceAddress = 0;
 
+#ifdef _DEBUG
+char audioInd[2][100];
+int currentInd = 0;
+#endif
+
 void initSub(IDirect3DDevice9* device)
 {
 	subContext = SubContext(device);
@@ -47,6 +52,13 @@ char* setHook(char* dst, char* src, size_t len)
 void __cdecl hook_SoundEffect(int a1, int a2, int a3, int a4, int a5, int a6)
 {
 	orig_SoundEffect(a1, a2, a3, a4, a5, a6);
+#ifdef _DEBUG
+	currentInd ^= 1;
+	sprintf_s<100>(audioInd[currentInd], "SE: %d", a2);
+	char str[100];
+	sprintf_s<100>(str, "WHITE ALBUM2 [%s | %s]", audioInd[currentInd], audioInd[currentInd ^ 1]);
+	SetWindowTextA(*(HWND*)0x4C2224, str);
+#endif
 	if (!subContext.isPlaying)
 	{
 		// The original author stated that the scene ID becomes a must 
@@ -69,6 +81,13 @@ void __cdecl hook_SoundEffect(int a1, int a2, int a3, int a4, int a5, int a6)
 int __cdecl hook_Voice(int a1, int a2, int a3, int a4, int a5, int a6, int a7)
 {
 	int result = orig_Voice(a1, a2, a3, a4, a5, a6, a7);
+#ifdef _DEBUG
+	currentInd ^= 1;
+	sprintf_s<100>(audioInd[currentInd], "Scene: %d Voice: %d", a3 == -1 ? (*(int*)0x4BE4CC == -1 ? *(int*)0xA391E0 : *(int*)0x4BE4CC) : a3, *(int*)0xA391EC + a4);
+	char str[100];
+	sprintf_s<100>(str, "WHITE ALBUM2 [%s | %s]", audioInd[currentInd], audioInd[currentInd ^ 1]);
+	SetWindowTextA(*(HWND*)0x4C2224, str);
+#endif
 	if (!subContext.isPlaying)
 	{
 		// The scene here is NOT always the same as the the actual scene.

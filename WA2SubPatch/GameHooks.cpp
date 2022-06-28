@@ -3,11 +3,13 @@
 
 typedef void(__cdecl* func_SoundEffect)(int, int, int, int, int, int);
 typedef int(__cdecl* func_Voice)(int, int, int, int, int, int, int);
+typedef int(__cdecl* func_Interview)(int, int);
 typedef int(__cdecl* func_Reset)(int, int);
 typedef INT_PTR(__stdcall* func_VersionDialogProc)(HWND, UINT, WPARAM, LPARAM);
 
 func_SoundEffect orig_SoundEffect;
 func_Voice orig_Voice;
+func_Interview orig_Interview;
 func_Reset orig_ResetSE;
 func_Reset orig_ResetVoice;
 func_VersionDialogProc orig_VersionDialogProc;
@@ -111,6 +113,30 @@ int __cdecl hook_Voice(int a1, int a2, int a3, int a4, int a5, int a6, int a7)
 	return result;
 }
 
+int __cdecl hook_Interview(int a1, int a2)
+{
+	int result = orig_Interview(a1, a2);
+#ifdef _DEBUG
+	currentInd ^= 1;
+	sprintf_s<100>(audioInd[currentInd], "Interview: %d", a1 - 1);
+	char str[100];
+	sprintf_s<100>(str, "WHITE ALBUM2 [%s | %s]", audioInd[currentInd], audioInd[currentInd ^ 1]);
+	SetWindowTextA(*(HWND*)0x4C2224, str);
+#endif
+	// SE or voice shouldn't be playing,
+	// so there's no need to check.
+	//
+	// Consider the interview as voice since
+	// they share the same reset function.
+	//
+	// 9500 is "scene number" of the interview,
+	// used here to avoid conflict.
+	subContext.tryPlay(9500 << 16 | a1 - 1, true);
+	// 0xA390D8, 0xA390EC, 0xA390E8 should all be fine.
+	voiceAddress = 0xA390D8;
+	return result;
+}
+
 int __cdecl hook_ResetSE(int a1, int a2)
 {
 	int result = orig_ResetSE(a1, a2);
@@ -142,7 +168,7 @@ INT_PTR __stdcall hook_VersionDialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	{
 		wchar_t str[100];
 		GetWindowTextW(hwnd, str, 100);
-		wcscat_s<100>(str, L" ×ÖÄ»²¹¶¡°æ±¾0.1");
+		wcscat_s<100>(str, L" ×ÖÄ»²¹¶¡°æ±¾0.2");
 		SetWindowTextW(hwnd, str);
 	}
 	return result;
@@ -155,6 +181,7 @@ void setGameHooks()
 	// 0x4058F0 is fine and probably the "original" one, but we need the address which it doesn't offer
 	orig_SoundEffect = (func_SoundEffect)setHook((char*)hook_SoundEffect, (char*)0x40F400, 9);
 	orig_Voice = (func_Voice)setHook((char*)hook_Voice, (char*)0x40EDA0, 6);
+	orig_Interview = (func_Interview)setHook((char*)hook_Interview, (char*)0x406270, 6);
 	orig_ResetSE = (func_Reset)setHook((char*)hook_ResetSE, (char*)0x40F590, 6);
 	orig_ResetVoice = (func_Reset)setHook((char*)hook_ResetVoice, (char*)0x40EC30, 5);
 	// version info dialog callback function. hook to add patch version to title 

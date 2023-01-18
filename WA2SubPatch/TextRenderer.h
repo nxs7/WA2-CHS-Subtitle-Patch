@@ -12,7 +12,8 @@ const int FONT_STROKE = 2;
 const int FONT_OCCUPATION = FONT_SIZE + 2 * FONT_STROKE;
 const int FONT_PER_LINE = 20;
 
-struct TextRenderer {
+struct TextRenderer
+{
     LPDIRECT3DDEVICE9 device;
     LPDIRECT3DTEXTURE9 texture;
     LPD3DXSPRITE sprite;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <chrono>
 
 #include "TextRenderer.h"
 #include "SubLoader.h"
@@ -16,12 +17,12 @@ struct SubContext
     TextRenderer renderer;
     LPDIRECT3DDEVICE9 device;
 
-    ULONGLONG beginTick;
+    std::chrono::steady_clock::time_point beginTime;
 
     DialogueMap dialogues;
     std::vector<Subtitle> sub;
 
-    unsigned int subIndex;
+    unsigned subIndex;
 
     bool isPlaying;
     bool isVoicePlaying;

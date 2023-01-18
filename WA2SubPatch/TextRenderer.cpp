@@ -26,7 +26,7 @@ void TextRenderer::renderText(std::vector<short> str)
 {
 	int len = str.size();
 	sprite->Begin(D3DXSPRITE_ALPHABLEND);
-	pos.x = (float)(SCREEN_WIDTH - FONT_SIZE * len) / 2 - FONT_STROKE;
+	pos.x = (float)((SCREEN_WIDTH - FONT_SIZE * len) / 2 - FONT_STROKE);
 	for (int i = 0; i < len; i++)
 	{
 		rect.top = FONT_OCCUPATION * (str[i] / FONT_PER_LINE);

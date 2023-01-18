@@ -44,8 +44,8 @@ for dialogue in subdata['soundEffect']:
             if not key in subtitle:
                 print(f"Line {subtitle['__line__']}: soundEffect/subtitle: Key '{key}' expected.")
                 exit(1)
-            for char in subtitle['text']:
-                charset.add(char)
+        for char in subtitle['text']:
+            charset.add(char)
 for dialogue in subdata['voice']:
     for key in ['scene', 'id', 'content']:
         if not key in dialogue:
@@ -56,20 +56,20 @@ for dialogue in subdata['voice']:
             if not key in subtitle:
                 print(f"Line {subtitle['__line__']}: voice/subtitle: Key '{key}' expected.")
                 exit(1)
-            for char in subtitle['text']:
-                charset.add(char)
+        for char in subtitle['text']:
+            charset.add(char)
 
 charset = list(charset)
 charset.sort()
 charmap = {}
-for i in range(0, len(charset)):
+for i in range(len(charset)):
     charmap[charset[i]] = i
 
 row_count = -(-len(charset) // FONT_PER_LINE)
 library = Image.new('RGBA', (FONT_OCCUPATION * FONT_PER_LINE, FONT_OCCUPATION * row_count), (255, 0, 0, 0))
 draw = ImageDraw.Draw(library)
 font = ImageFont.truetype(FONT_FILENAME, FONT_SIZE)
-for i in range(0, len(charset)):
+for i in range(len(charset)):
     draw.text((FONT_STROKE + FONT_OCCUPATION * (i % FONT_PER_LINE), FONT_STROKE + FONT_OCCUPATION * (i // FONT_PER_LINE)), charset[i], 'white', font, stroke_width=FONT_STROKE, stroke_fill='black')
 library.save('subfont.tga')
 

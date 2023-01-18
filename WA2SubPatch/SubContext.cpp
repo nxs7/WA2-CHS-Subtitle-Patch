@@ -5,7 +5,7 @@ SubContext::SubContext(LPDIRECT3DDEVICE9 device)
 	renderer = TextRenderer(device);
 	this->device = device;
 
-	beginTick = GetTickCount64();
+	beginTime = std::chrono::steady_clock::now();
 	dialogues = loadSub();
 	subIndex = 0;
 	isPlaying = false;
@@ -17,7 +17,7 @@ bool SubContext::tryPlay(int id, bool voice)
 	{
 		sub = dialogues[id];
 		subIndex = 0;
-		beginTick = GetTickCount64();
+		beginTime = std::chrono::steady_clock::now();
 		isPlaying = true;
 		isVoicePlaying = voice;
 		isDisplaying = false;
@@ -30,10 +30,10 @@ void SubContext::update()
 {
 	if (isPlaying)
 	{
-		ULONGLONG ticks = GetTickCount64() - beginTick;
+		int duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - beginTime).count();
 
 		// update status
-		if (isDisplaying && ticks > sub[subIndex].end)
+		if (isDisplaying && duration > sub[subIndex].end)
 		{
 			isDisplaying = false;
 			subIndex++;
@@ -43,7 +43,7 @@ void SubContext::update()
 				return;
 			}
 		}
-		if (!isDisplaying && ticks >= sub[subIndex].begin)
+		if (!isDisplaying && duration >= sub[subIndex].begin)
 		{
 			isDisplaying = true;
 		}

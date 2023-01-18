@@ -39,13 +39,13 @@ char* setHook(char* dst, char* src, size_t len)
 	char* trampo = (char*)VirtualAlloc(NULL, len + 5, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
 	memcpy(trampo, src, len);
-	*(trampo + len) = 0xE9; //jmp
-	*(int*)(trampo + len + 1) = src - trampo - 5; //(src + len) - (trampo + len + 5)
+	*(trampo + len) = 0xE9; // jmp
+	*(int*)(trampo + len + 1) = src - trampo - 5; // (src + len) - (trampo + len + 5)
 
 	VirtualProtect(src, 5, PAGE_READWRITE, &orig);
 	*src = 0xE9;
 	*(int*)(src + 1) = dst - src - 5; // dst - (src + 5)
-	VirtualProtect(src, 5, orig, NULL);
+	VirtualProtect(src, 5, orig, &orig);
 
 	return trampo;
 }
@@ -98,14 +98,7 @@ int __cdecl hook_Voice(int a1, int a2, int a3, int a4, int a5, int a6, int a7)
 		// its scene is always 2033, wherever it is played.
 		// The advantage of using the "local" scene is that a voice 
 		// only need to be subbed once, however many times it is played.
-		int scene = a3;
-		if (scene == -1)
-		{
-			if (*(int*)0x4BE4CC == -1)
-				scene = *(int*)0xA391E0;
-			else
-				scene = *(int*)0x4BE4CC;
-		}
+		int scene = a3 == -1 ? (*(int*)0x4BE4CC == -1 ? *(int*)0xA391E0 : *(int*)0x4BE4CC) : a3;
 		int voice = *(int*)0xA391EC + a4;
 		if (subContext.tryPlay(scene << 16 | voice, true))
 			voiceAddress = 0xA390D4 + 56 * a1;
@@ -141,11 +134,8 @@ int __cdecl hook_ResetSE(int a1, int a2)
 {
 	int result = orig_ResetSE(a1, a2);
 	if (subContext.isPlaying && !subContext.isVoicePlaying)
-	{
-		int offset = seAddress - (0x5E7360 + 52 * a1);
-		if (offset >= 0 && offset <= 52)
+		if (seAddress - (0x5E7360 + 52 * a1) == 4)
 			subContext.isPlaying = false;
-	}
 	return result;
 }
 
@@ -155,7 +145,7 @@ int __cdecl hook_ResetVoice(int a1, int a2)
 	if (subContext.isPlaying && subContext.isVoicePlaying)
 	{
 		int offset = voiceAddress - (0xA390C8 + 56 * a1);
-		if (offset >= 0 && offset <= 56)
+		if (offset == 12 || offset == 16) // 12 for ordinary voice; 16 for interview
 			subContext.isPlaying = false;
 	}
 	return result;
@@ -168,7 +158,7 @@ INT_PTR __stdcall hook_VersionDialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	{
 		wchar_t str[100];
 		GetWindowTextW(hwnd, str, 100);
-		wcscat_s<100>(str, L" ×ÖÄ»²¹¶¡°æ±¾0.2");
+		wcscat_s<100>(str, L" ×ÖÄ»²¹¶¡°æ±¾0.3");
 		SetWindowTextW(hwnd, str);
 	}
 	return result;

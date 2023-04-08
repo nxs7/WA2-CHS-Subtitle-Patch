@@ -10,6 +10,16 @@
 
 在游戏菜单 `帮助 | 系统信息` 中可查看当前补丁的版本。
 
+## 已知问题
+
+- 若系统安装了某些解码器，游戏启动时可能崩溃
+  
+  此补丁的当前版本与某些 DXVA 硬件解码器不兼容，如 LAV Filters。
+  
+  如果发现游戏启动时崩溃，请考虑卸载相关的解码器。
+  
+  感谢 `@JeffreyTNT` 提供的解决方案！
+
 ## 许可
 
 程序参考了 [TodokanaiTL/subtitles](https://github.com/TodokanaiTL/subtitles)。

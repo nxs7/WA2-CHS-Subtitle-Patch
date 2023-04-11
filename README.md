@@ -6,7 +6,7 @@
 
 ![sample.png](./sample.png)
 
-将补丁解包至游戏根目录，然后直接运行游戏主程序即可。
+在[此处](https://github.com/nxs7/WA2-CHS-Subtitle-Patch/releases/latest)下载补丁，将其解包至游戏根目录，然后直接运行游戏主程序即可。
 
 在游戏菜单 `帮助 | 系统信息` 中可查看当前补丁的版本。
 

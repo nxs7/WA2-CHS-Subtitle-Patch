@@ -46,9 +46,10 @@ void SubContext::update()
 		if (!isDisplaying && duration >= sub[subIndex].begin)
 		{
 			isDisplaying = true;
+			renderer.renderText(sub[subIndex].text);
 		}
 		// render text
 		if (isDisplaying)
-			renderer.renderText(sub[subIndex].text);
+			renderer.update();
 	}
 }

@@ -65,13 +65,16 @@ void SubContext::update()
 		if (!isSubDisplaying && duration >= sub[subIndex].begin)
 		{
 			isSubDisplaying = true;
+			renderer.renderSub(sub[subIndex].text);
+			if (!sub[subIndex].text2.empty())
+				renderer.renderSecondarySub(sub[subIndex].text2);
 		}
 		// render text
 		if (isSubDisplaying)
 		{
-			renderer.renderSub(sub[subIndex].text);
+			renderer.updateSub();
 			if (!sub[subIndex].text2.empty())
-				renderer.renderSecondarySub(sub[subIndex].text2);
+				renderer.updateSecondarySub();
 		}
 	}
 	if (isSongPlaying)
@@ -92,9 +95,10 @@ void SubContext::update()
 		if (!isSongDisplaying && duration >= song[songIndex].begin)
 		{
 			isSongDisplaying = true;
+			renderer.renderSong(song[songIndex].text);
 		}
 		// render text
 		if (isSongDisplaying)
-			renderer.renderSong(song[songIndex].text);
+			renderer.updateSong();
 	}
 }

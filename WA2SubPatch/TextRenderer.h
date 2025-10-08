@@ -16,13 +16,14 @@ struct TextRenderer
 {
     LPDIRECT3DDEVICE9 device;
     LPDIRECT3DTEXTURE9 texture;
+    LPDIRECT3DTEXTURE9 subtitle;
     LPD3DXSPRITE sprite;
     D3DCOLOR color;
-    D3DXVECTOR3 pos;
-    RECT rect;
+    D3DXVECTOR3 position;
 
     TextRenderer() = default;
     TextRenderer(LPDIRECT3DDEVICE9);
 
     void renderText(std::vector<short>);
+    void update();
 };

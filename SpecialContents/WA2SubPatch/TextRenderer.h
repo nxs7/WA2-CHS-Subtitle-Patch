@@ -18,10 +18,14 @@ struct TextRenderer
     LPDIRECT3DDEVICE9 device;
     LPDIRECT3DTEXTURE9 subTexture;
     LPDIRECT3DTEXTURE9 songTexture;
+    LPDIRECT3DTEXTURE9 subtitle;
+    LPDIRECT3DTEXTURE9 secondarySubtitle;
+    LPDIRECT3DTEXTURE9 song;
     LPD3DXSPRITE sprite;
     D3DCOLOR color;
-    D3DXVECTOR3 pos;
-    RECT rect;
+    D3DXVECTOR3 subPosition;
+    D3DXVECTOR3 secondarySubPosition;
+    D3DXVECTOR3 songPosition;
 
     TextRenderer() = default;
     TextRenderer(LPDIRECT3DDEVICE9);
@@ -29,4 +33,8 @@ struct TextRenderer
     void renderSub(std::vector<short>);
     void renderSecondarySub(std::vector<short>);
     void renderSong(std::vector<short>);
+    void renderText(LPDIRECT3DTEXTURE9& dest, LPDIRECT3DTEXTURE9 src, std::vector<short>);
+    void updateSub();
+    void updateSecondarySub();
+    void updateSong();
 };

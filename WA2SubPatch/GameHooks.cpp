@@ -158,7 +158,7 @@ INT_PTR __stdcall hook_VersionDialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	{
 		wchar_t str[100];
 		GetWindowTextW(hwnd, str, 100);
-		wcscat_s<100>(str, L" ×ÖÄ»²¹¶¡°æ±¾0.3");
+		wcscat_s<100>(str, L" ×ÖÄ»²¹¶¡°æ±¾1.0");
 		SetWindowTextW(hwnd, str);
 	}
 	return result;

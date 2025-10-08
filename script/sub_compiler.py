@@ -13,18 +13,18 @@ class SafeLineLoader(yaml.loader.SafeLoader):
         return mapping
 
 
-FONT_FILENAME = 'font.ttf'
 FONT_SIZE = 28
 FONT_STROKE = 2
 FONT_OCCUPATION = FONT_SIZE + 2 * FONT_STROKE
 FONT_PER_LINE = 20
 
-if len(sys.argv) < 2:
-    print('Usage:\npython sub_compiler.py <input_file>')
+if len(sys.argv) < 3:
+    print('Usage:\npython sub_compiler.py <input_file> <font_ttf>')
     exit(1)
-if not os.path.isfile(sys.argv[1]):
-    print(f"Input file '{sys.argv[1]}' not found.")
-    exit(1)
+for file in sys.argv[1:3]:
+    if not os.path.isfile(file):
+        print(f"File '{file}' not found.")
+        exit(1)
 
 with open(sys.argv[1], encoding='utf-8') as f:
     subdata = yaml.load(f, Loader=SafeLineLoader)
@@ -66,11 +66,11 @@ for i in range(len(charset)):
     charmap[charset[i]] = i
 
 row_count = -(-len(charset) // FONT_PER_LINE)
-library = Image.new('RGBA', (FONT_OCCUPATION * FONT_PER_LINE, FONT_OCCUPATION * row_count), (255, 0, 0, 0))
+library = Image.new('RGBA', (FONT_OCCUPATION * FONT_PER_LINE, FONT_OCCUPATION * row_count), (0, 0, 0, 0))
 draw = ImageDraw.Draw(library)
-font = ImageFont.truetype(FONT_FILENAME, FONT_SIZE)
+font = ImageFont.truetype(sys.argv[2], FONT_SIZE)
 for i in range(len(charset)):
-    draw.text((FONT_STROKE + FONT_OCCUPATION * (i % FONT_PER_LINE), FONT_STROKE + FONT_OCCUPATION * (i // FONT_PER_LINE)), charset[i], 'white', font, stroke_width=FONT_STROKE, stroke_fill='black')
+    draw.text((FONT_STROKE + FONT_OCCUPATION * (i % FONT_PER_LINE), FONT_STROKE + FONT_OCCUPATION * (i // FONT_PER_LINE) - 2), charset[i], 'white', font, stroke_width=FONT_STROKE, stroke_fill='black')
 library.save('subfont.tga')
 
 with open('subtext.dat', 'wb') as f:
